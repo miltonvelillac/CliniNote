@@ -1,27 +1,10 @@
-import { ClinicalNoteRepositoryPort } from "@clininote/api/application/ports/clinical-note-repository.port.js";
-import { ClinicalNoteModel } from "@clininote/api/domain/entities/clinical-note.js";
+import { AuditLogRepositoryPort } from "@clininote/api/application/ports/audit-log-repository.port.js";
+import { AuditLogModel } from "@clininote/api/domain/entities/audit-log.js";
 
-export class InMemoryClinicalNoteRepository implements ClinicalNoteRepositoryPort {
-  private readonly clinicalNotes = new Map<string, ClinicalNoteModel>();
-    async create(note: ClinicalNoteModel): Promise<ClinicalNoteModel> {
+export class InMemoryAuditLogRepository implements AuditLogRepositoryPort {
+  private readonly clinicalNotes = new Map<string, AuditLogModel>();
+    async create(note: AuditLogModel): Promise<AuditLogModel> {
     this.clinicalNotes.set(note.id, note);
     return note;
   }
-
-    async findBySessionId(sessionId: string): Promise<ClinicalNoteModel | null> {
-    return (
-      [...this.clinicalNotes.values()].find(
-        (note) => note.sessionId === sessionId
-      ) ?? null
-    );
-  }
-
-    async update(note: ClinicalNoteModel): Promise<ClinicalNoteModel> {
-    if (!this.clinicalNotes.has(note.id)) {
-      throw new Error(`Clinical note with id ${note.id} was not found.`);
-    }
-    this.clinicalNotes.set(note.id, note);
-    return note;
-  }
-
 }

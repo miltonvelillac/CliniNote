@@ -1,4 +1,9 @@
-export type SessionStatusType = 'created' | 'transcribed' | 'note_generated' | 'approved';
+export enum SessionStatusEnum {
+  Created = 'created',
+  Transcribed = 'transcribed',
+  NoteGenerated = 'note_generated',
+  Approved = 'approved'
+}
 
 export type SessionModel = {
   id: string;
@@ -7,6 +12,6 @@ export type SessionModel = {
   sessionDate: Date;
   rawInputText?: string;
   transcriptionText?: string;
-  status: SessionStatusType;
+  status: SessionStatusEnum;
   createdAt: Date;
 };
