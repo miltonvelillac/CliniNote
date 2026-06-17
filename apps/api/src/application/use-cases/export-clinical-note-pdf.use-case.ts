@@ -3,6 +3,8 @@ import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
 import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
 import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.enum.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
+import { errorMessages } from '../../domain/messages/error-messages.js';
+import { assertRequiredString } from '../../domain/validation/assertions.js';
 import type { ExportClinicalNotePdfInputModel } from '../models/export-clinical-note-pdf-input.model.js';
 import type { ExportClinicalNotePdfResultModel } from '../models/export-clinical-note-pdf-result.model.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
@@ -21,26 +23,25 @@ export class ExportClinicalNotePdfUseCase {
   async execute(
     input: ExportClinicalNotePdfInputModel
   ): Promise<ExportClinicalNotePdfResultModel> {
-    if (!input.clinicalNoteId) {
-      throw new Error('clinicalNoteId is required.');
-    }
-
-    if (!input.psychologistId) {
-      throw new Error('psychologistId is required.');
-    }
+    const clinicalNoteId = assertRequiredString(
+      input.clinicalNoteId,
+      'clinicalNoteId'
+    );
+    const psychologistId = assertRequiredString(
+      input.psychologistId,
+      'psychologistId'
+    );
 
     const clinicalNote = await this.clinicalNoteRepository.findById(
-      input.clinicalNoteId
+      clinicalNoteId
     );
 
     if (!clinicalNote) {
-      throw new Error(
-        `Clinical note with id ${input.clinicalNoteId} was not found.`
-      );
+      throw new Error(errorMessages.clinicalNoteNotFound(clinicalNoteId));
     }
 
     if (clinicalNote.status !== ClinicalNoteStatusEnum.Approved) {
-      throw new Error('Only approved clinical notes can be exported.');
+      throw new Error(errorMessages.onlyApprovedClinicalNotesCanBeExported);
     }
 
     const session = await this.sessionRepository.findById(
@@ -48,13 +49,11 @@ export class ExportClinicalNotePdfUseCase {
     );
 
     if (!session) {
-      throw new Error(
-        `Session with id ${clinicalNote.sessionId} was not found.`
-      );
+      throw new Error(errorMessages.sessionNotFound(clinicalNote.sessionId));
     }
 
-    if (session.psychologistId !== input.psychologistId) {
-      throw new Error('Clinical note does not belong to the psychologist.');
+    if (session.psychologistId !== psychologistId) {
+      throw new Error(errorMessages.clinicalNoteDoesNotBelongToPsychologist);
     }
 
     const pdf = await this.pdfGenerator.generatePdf({
@@ -64,7 +63,7 @@ export class ExportClinicalNotePdfUseCase {
 
     await this.auditLogRepository.create({
       id: randomUUID(),
-      userId: input.psychologistId,
+      userId: psychologistId,
       action: AuditActionEnum.Export,
       entityType: AuditEntityTypeEnum.ClinicalNote,
       entityId: clinicalNote.id,

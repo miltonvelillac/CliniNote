@@ -1,5 +1,6 @@
 import type { ClinicalNoteRepositoryPort } from '@clininote/api/application/ports/clinical-note-repository.port.js';
 import type { ClinicalNoteModel } from '@clininote/api/domain/entities/clinical-note.js';
+import { errorMessages } from '@clininote/api/domain/messages/error-messages.js';
 
 export class InMemoryClinicalNoteRepository implements ClinicalNoteRepositoryPort {
   private readonly clinicalNotes = new Map<string, ClinicalNoteModel>();
@@ -23,7 +24,7 @@ export class InMemoryClinicalNoteRepository implements ClinicalNoteRepositoryPor
 
   async update(note: ClinicalNoteModel): Promise<ClinicalNoteModel> {
     if (!this.clinicalNotes.has(note.id)) {
-      throw new Error(`Clinical note with id ${note.id} was not found.`);
+      throw new Error(errorMessages.clinicalNoteNotFound(note.id));
     }
 
     this.clinicalNotes.set(note.id, note);

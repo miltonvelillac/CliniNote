@@ -3,6 +3,12 @@ import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
 import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
 import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.enum.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
+import { errorMessages } from '../../domain/messages/error-messages.js';
+import {
+  assertAtLeastOneDefined,
+  assertRequiredString,
+  normalizeOptionalString
+} from '../../domain/validation/assertions.js';
 import type { UpdateClinicalNoteInputModel } from '../models/update-clinical-note-input.model.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
 import type { ClinicalNoteRepositoryPort } from '../ports/clinical-note-repository.port.js';
@@ -24,28 +30,58 @@ export class UpdateClinicalNoteUseCase {
     );
 
     if (clinicalNote.status === ClinicalNoteStatusEnum.Approved) {
-      throw new Error('Approved clinical notes cannot be edited.');
+      throw new Error(errorMessages.approvedClinicalNotesCannotBeEdited);
     }
+
+    assertAtLeastOneDefined(
+      {
+        consultationReason: input.consultationReason,
+        currentProblem: input.currentProblem,
+        background: input.background,
+        mentalStatus: input.mentalStatus,
+        conceptualization: input.conceptualization,
+        intervention: input.intervention,
+        clinicalImpression: input.clinicalImpression,
+        plan: input.plan,
+        recommendations: input.recommendations,
+        professionalObservations: input.professionalObservations,
+        missingInformation: input.missingInformation
+      },
+      errorMessages.atLeastOneClinicalNoteFieldRequired
+    );
 
     const updatedNote: ClinicalNoteModel = {
       ...clinicalNote,
       consultationReason:
-        input.consultationReason ?? clinicalNote.consultationReason,
-      currentProblem: input.currentProblem ?? clinicalNote.currentProblem,
-      background: input.background ?? clinicalNote.background,
-      mentalStatus: input.mentalStatus ?? clinicalNote.mentalStatus,
+        normalizeOptionalString(input.consultationReason) ??
+        clinicalNote.consultationReason,
+      currentProblem:
+        normalizeOptionalString(input.currentProblem) ??
+        clinicalNote.currentProblem,
+      background:
+        normalizeOptionalString(input.background) ?? clinicalNote.background,
+      mentalStatus:
+        normalizeOptionalString(input.mentalStatus) ??
+        clinicalNote.mentalStatus,
       conceptualization:
-        input.conceptualization ?? clinicalNote.conceptualization,
-      intervention: input.intervention ?? clinicalNote.intervention,
+        normalizeOptionalString(input.conceptualization) ??
+        clinicalNote.conceptualization,
+      intervention:
+        normalizeOptionalString(input.intervention) ??
+        clinicalNote.intervention,
       clinicalImpression:
-        input.clinicalImpression ?? clinicalNote.clinicalImpression,
-      plan: input.plan ?? clinicalNote.plan,
-      recommendations: input.recommendations ?? clinicalNote.recommendations,
+        normalizeOptionalString(input.clinicalImpression) ??
+        clinicalNote.clinicalImpression,
+      plan: normalizeOptionalString(input.plan) ?? clinicalNote.plan,
+      recommendations:
+        normalizeOptionalString(input.recommendations) ??
+        clinicalNote.recommendations,
       professionalObservations:
-        input.professionalObservations ??
+        normalizeOptionalString(input.professionalObservations) ??
         clinicalNote.professionalObservations,
       missingInformation:
-        input.missingInformation ?? clinicalNote.missingInformation
+        normalizeOptionalString(input.missingInformation) ??
+        clinicalNote.missingInformation
     };
 
     const savedNote = await this.clinicalNoteRepository.update(updatedNote);
@@ -66,20 +102,21 @@ export class UpdateClinicalNoteUseCase {
     clinicalNoteId: string,
     psychologistId: string
   ): Promise<ClinicalNoteModel> {
-    if (!clinicalNoteId) {
-      throw new Error('clinicalNoteId is required.');
-    }
-
-    if (!psychologistId) {
-      throw new Error('psychologistId is required.');
-    }
+    const normalizedClinicalNoteId = assertRequiredString(
+      clinicalNoteId,
+      'clinicalNoteId'
+    );
+    const normalizedPsychologistId = assertRequiredString(
+      psychologistId,
+      'psychologistId'
+    );
 
     const clinicalNote = await this.clinicalNoteRepository.findById(
-      clinicalNoteId
+      normalizedClinicalNoteId
     );
 
     if (!clinicalNote) {
-      throw new Error(`Clinical note with id ${clinicalNoteId} was not found.`);
+      throw new Error(errorMessages.clinicalNoteNotFound(normalizedClinicalNoteId));
     }
 
     const session = await this.sessionRepository.findById(
@@ -87,13 +124,11 @@ export class UpdateClinicalNoteUseCase {
     );
 
     if (!session) {
-      throw new Error(
-        `Session with id ${clinicalNote.sessionId} was not found.`
-      );
+      throw new Error(errorMessages.sessionNotFound(clinicalNote.sessionId));
     }
 
-    if (session.psychologistId !== psychologistId) {
-      throw new Error('Clinical note does not belong to the psychologist.');
+    if (session.psychologistId !== normalizedPsychologistId) {
+      throw new Error(errorMessages.clinicalNoteDoesNotBelongToPsychologist);
     }
 
     return clinicalNote;

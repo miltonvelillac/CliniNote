@@ -5,6 +5,8 @@ import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.
 import { SessionStatusEnum } from '../../domain/enums/session-status.enum.js';
 import type { ApproveClinicalNoteInputModel } from '../models/approve-clinical-note-input.model.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
+import { errorMessages } from '../../domain/messages/error-messages.js';
+import { assertRequiredString } from '../../domain/validation/assertions.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
 import type { ClinicalNoteRepositoryPort } from '../ports/clinical-note-repository.port.js';
 import type { SessionRepositoryPort } from '../ports/session-repository.port.js';
@@ -19,26 +21,25 @@ export class ApproveClinicalNoteUseCase {
   async execute(
     input: ApproveClinicalNoteInputModel
   ): Promise<ClinicalNoteModel> {
-    if (!input.clinicalNoteId) {
-      throw new Error('clinicalNoteId is required.');
-    }
-
-    if (!input.psychologistId) {
-      throw new Error('psychologistId is required.');
-    }
+    const clinicalNoteId = assertRequiredString(
+      input.clinicalNoteId,
+      'clinicalNoteId'
+    );
+    const psychologistId = assertRequiredString(
+      input.psychologistId,
+      'psychologistId'
+    );
 
     const clinicalNote = await this.clinicalNoteRepository.findById(
-      input.clinicalNoteId
+      clinicalNoteId
     );
 
     if (!clinicalNote) {
-      throw new Error(
-        `Clinical note with id ${input.clinicalNoteId} was not found.`
-      );
+      throw new Error(errorMessages.clinicalNoteNotFound(clinicalNoteId));
     }
 
     if (clinicalNote.status === ClinicalNoteStatusEnum.Approved) {
-      throw new Error('Clinical note is already approved.');
+      throw new Error(errorMessages.clinicalNoteAlreadyApproved);
     }
 
     const session = await this.sessionRepository.findById(
@@ -46,13 +47,11 @@ export class ApproveClinicalNoteUseCase {
     );
 
     if (!session) {
-      throw new Error(
-        `Session with id ${clinicalNote.sessionId} was not found.`
-      );
+      throw new Error(errorMessages.sessionNotFound(clinicalNote.sessionId));
     }
 
-    if (session.psychologistId !== input.psychologistId) {
-      throw new Error('Clinical note does not belong to the psychologist.');
+    if (session.psychologistId !== psychologistId) {
+      throw new Error(errorMessages.clinicalNoteDoesNotBelongToPsychologist);
     }
 
     const approvedNote = await this.clinicalNoteRepository.update({
@@ -68,7 +67,7 @@ export class ApproveClinicalNoteUseCase {
 
     await this.auditLogRepository.create({
       id: randomUUID(),
-      userId: input.psychologistId,
+      userId: psychologistId,
       action: AuditActionEnum.Approve,
       entityType: AuditEntityTypeEnum.ClinicalNote,
       entityId: approvedNote.id,

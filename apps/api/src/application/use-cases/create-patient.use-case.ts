@@ -4,6 +4,11 @@ import type { PatientRepositoryPort } from '../ports/patient-repository.port.js'
 import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
 import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
 import type { PatientModel } from '../../domain/entities/patient.js';
+import {
+  assertOptionalValidDate,
+  assertRequiredString,
+  normalizeOptionalString
+} from '../../domain/validation/assertions.js';
 import type { CreatePatientInputModel } from '../models/create-patient-input.model.js';
 
 export class CreatePatientUseCase {
@@ -13,23 +18,19 @@ export class CreatePatientUseCase {
   ) {}
 
   async execute(input: CreatePatientInputModel): Promise<PatientModel> {
-    const fullName = input.fullName.trim();
-
-    if (!input.psychologistId) {
-      throw new Error('psychologistId is required.');
-    }
-
-    if (!fullName) {
-      throw new Error('fullName is required.');
-    }
+    const psychologistId = assertRequiredString(
+      input.psychologistId,
+      'psychologistId'
+    );
+    const fullName = assertRequiredString(input.fullName, 'fullName');
 
     const patient: PatientModel = {
       id: randomUUID(),
-      psychologistId: input.psychologistId,
+      psychologistId,
       fullName,
-      document: input.document,
-      birthDate: input.birthDate,
-      phone: input.phone,
+      document: normalizeOptionalString(input.document),
+      birthDate: assertOptionalValidDate(input.birthDate, 'birthDate'),
+      phone: normalizeOptionalString(input.phone),
       createdAt: new Date()
     };
 
@@ -37,7 +38,7 @@ export class CreatePatientUseCase {
 
     await this.auditLogRepository.create({
       id: randomUUID(),
-      userId: input.psychologistId,
+      userId: psychologistId,
       action: AuditActionEnum.Create,
       entityType: AuditEntityTypeEnum.Patient,
       entityId: createdPatient.id,

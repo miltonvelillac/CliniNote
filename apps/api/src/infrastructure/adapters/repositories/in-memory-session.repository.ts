@@ -1,5 +1,6 @@
 import type { SessionRepositoryPort } from '../../../application/ports/session-repository.port.js';
 import type { SessionModel } from '../../../domain/entities/session.js';
+import { errorMessages } from '../../../domain/messages/error-messages.js';
 
 export class InMemorySessionRepository implements SessionRepositoryPort {
   private readonly sessions = new Map<string, SessionModel>();
@@ -15,7 +16,7 @@ export class InMemorySessionRepository implements SessionRepositoryPort {
 
   async update(session: SessionModel): Promise<SessionModel> {
     if (!this.sessions.has(session.id)) {
-      throw new Error(`Session with id ${session.id} was not found.`);
+      throw new Error(errorMessages.sessionNotFound(session.id));
     }
 
     this.sessions.set(session.id, session);

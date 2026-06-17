@@ -32,7 +32,7 @@ Goal: create a clean API using hexagonal architecture.
 
 ## Step 3: Domain Model
 
-Status: in progress.
+Status: completed.
 
 Goal: define core rules without a real database yet.
 
@@ -49,7 +49,7 @@ Goal: define core rules without a real database yet.
   - [x] `AuditActionEnum`
   - [x] `AuditEntityTypeEnum`
 - [x] Move application input/result models out of `domain/entities`.
-- Add basic validations.
+- [x] Add basic validations.
 - [x] Define session and note states.
 - [x] Ensure AI only generates drafts and never approves final notes.
 

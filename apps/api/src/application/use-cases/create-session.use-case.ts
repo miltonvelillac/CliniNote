@@ -5,6 +5,12 @@ import type { SessionRepositoryPort } from '../ports/session-repository.port.js'
 import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
 import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
 import { SessionStatusEnum } from '../../domain/enums/session-status.enum.js';
+import { errorMessages } from '../../domain/messages/error-messages.js';
+import {
+  assertOptionalValidDate,
+  assertRequiredString,
+  normalizeOptionalString
+} from '../../domain/validation/assertions.js';
 import type { CreateSessionInputModel } from '../models/create-session-input.model.js';
 import type { SessionModel } from '../../domain/entities/session.js';
 
@@ -16,30 +22,30 @@ export class CreateSessionUseCase {
   ) {}
 
   async execute(input: CreateSessionInputModel): Promise<SessionModel> {
-    if (!input.patientId) {
-      throw new Error('patientId is required.');
-    }
+    const patientId = assertRequiredString(input.patientId, 'patientId');
+    const psychologistId = assertRequiredString(
+      input.psychologistId,
+      'psychologistId'
+    );
+    const sessionDate =
+      assertOptionalValidDate(input.sessionDate, 'sessionDate') ?? new Date();
 
-    if (!input.psychologistId) {
-      throw new Error('psychologistId is required.');
-    }
-
-    const patient = await this.patientRepository.findById(input.patientId);
+    const patient = await this.patientRepository.findById(patientId);
 
     if (!patient) {
-      throw new Error(`Patient with id ${input.patientId} was not found.`);
+      throw new Error(errorMessages.patientNotFound(patientId));
     }
 
-    if (patient.psychologistId !== input.psychologistId) {
-      throw new Error('Patient does not belong to the psychologist.');
+    if (patient.psychologistId !== psychologistId) {
+      throw new Error(errorMessages.patientDoesNotBelongToPsychologist);
     }
 
     const session: SessionModel = {
       id: randomUUID(),
-      patientId: input.patientId,
-      psychologistId: input.psychologistId,
-      sessionDate: input.sessionDate ?? new Date(),
-      rawInputText: input.rawInputText,
+      patientId,
+      psychologistId,
+      sessionDate,
+      rawInputText: normalizeOptionalString(input.rawInputText),
       status: SessionStatusEnum.Created,
       createdAt: new Date()
     };
@@ -48,7 +54,7 @@ export class CreateSessionUseCase {
 
     await this.auditLogRepository.create({
       id: randomUUID(),
-      userId: input.psychologistId,
+      userId: psychologistId,
       action: AuditActionEnum.Create,
       entityType: AuditEntityTypeEnum.Session,
       entityId: createdSession.id,

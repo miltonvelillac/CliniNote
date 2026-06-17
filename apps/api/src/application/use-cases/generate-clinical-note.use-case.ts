@@ -5,6 +5,8 @@ import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.
 import { SessionStatusEnum } from '../../domain/enums/session-status.enum.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
 import type { SessionModel } from '../../domain/entities/session.js';
+import { errorMessages } from '../../domain/messages/error-messages.js';
+import { assertRequiredString } from '../../domain/validation/assertions.js';
 import type { GenerateClinicalNoteInputModel } from '../models/generate-clinical-note-input.model.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
 import type { ClinicalNoteGeneratorPort } from '../ports/clinical-note-generator.port.js';
@@ -22,6 +24,8 @@ export class GenerateClinicalNoteUseCase {
   async execute(
     input: GenerateClinicalNoteInputModel
   ): Promise<ClinicalNoteModel> {
+    const template = assertRequiredString(input.template, 'template');
+    const language = assertRequiredString(input.language, 'language');
     const session = await this.findOwnedSession(
       input.sessionId,
       input.psychologistId
@@ -32,13 +36,15 @@ export class GenerateClinicalNoteUseCase {
     );
 
     if (existingNote) {
-      throw new Error(`Clinical note for session ${session.id} already exists.`);
+      throw new Error(
+        errorMessages.clinicalNoteForSessionAlreadyExists(session.id)
+      );
     }
 
     const generatedNote = await this.clinicalNoteGenerator.generateClinicalNote({
       sessionSummary,
-      template: input.template,
-      language: input.language
+      template,
+      language
     });
 
     const clinicalNote: ClinicalNoteModel = {
@@ -72,22 +78,20 @@ export class GenerateClinicalNoteUseCase {
     sessionId: string,
     psychologistId: string
   ): Promise<SessionModel> {
-    if (!sessionId) {
-      throw new Error('sessionId is required.');
-    }
+    const normalizedSessionId = assertRequiredString(sessionId, 'sessionId');
+    const normalizedPsychologistId = assertRequiredString(
+      psychologistId,
+      'psychologistId'
+    );
 
-    if (!psychologistId) {
-      throw new Error('psychologistId is required.');
-    }
-
-    const session = await this.sessionRepository.findById(sessionId);
+    const session = await this.sessionRepository.findById(normalizedSessionId);
 
     if (!session) {
-      throw new Error(`Session with id ${sessionId} was not found.`);
+      throw new Error(errorMessages.sessionNotFound(normalizedSessionId));
     }
 
-    if (session.psychologistId !== psychologistId) {
-      throw new Error('Session does not belong to the psychologist.');
+    if (session.psychologistId !== normalizedPsychologistId) {
+      throw new Error(errorMessages.sessionDoesNotBelongToPsychologist);
     }
 
     return session;
@@ -101,7 +105,7 @@ export class GenerateClinicalNoteUseCase {
     ).trim();
 
     if (!sessionSummary) {
-      throw new Error('Session summary or transcription is required.');
+      throw new Error(errorMessages.sessionSummaryRequired);
     }
 
     return sessionSummary;
