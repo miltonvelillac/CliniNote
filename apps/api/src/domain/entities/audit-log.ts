@@ -1,4 +1,4 @@
-export type AuditAction =
+export type AuditActionType =
   | 'create'
   | 'update'
   | 'transcribe'
@@ -6,10 +6,10 @@ export type AuditAction =
   | 'approve'
   | 'export';
 
-export type AuditLog = {
+export type AuditLogModel = {
   id: string;
   userId: string;
-  action: AuditAction;
+  action: AuditActionType;
   entityType: string;
   entityId: string;
   createdAt: Date;

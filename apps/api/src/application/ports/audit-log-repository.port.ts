@@ -1,5 +1,5 @@
-import { AuditLog } from '../../domain/entities/audit-log.js';
+import { AuditLogModel } from '../../domain/entities/audit-log.js';
 
 export interface AuditLogRepositoryPort {
-  create(log: AuditLog): Promise<AuditLog>;
+  create(log: AuditLogModel): Promise<AuditLogModel>;
 }

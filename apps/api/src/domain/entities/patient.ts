@@ -1,4 +1,4 @@
-export type Patient = {
+export type PatientModel = {
   id: string;
   psychologistId: string;
   fullName: string;

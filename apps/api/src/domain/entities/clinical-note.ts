@@ -1,4 +1,4 @@
-export type ClinicalNote = {
+export type ClinicalNoteModel = {
   id: string;
   sessionId: string;
   consultationReason: string;

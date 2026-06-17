@@ -1,7 +1,7 @@
-import { Session } from '../../domain/entities/session.js';
+import { SessionModel } from '../../domain/entities/session.js';
 
 export interface SessionRepositoryPort {
-  create(session: Session): Promise<Session>;
-  findById(id: string): Promise<Session | null>;
-  update(session: Session): Promise<Session>;
+  create(session: SessionModel): Promise<SessionModel>;
+  findById(id: string): Promise<SessionModel | null>;
+  update(session: SessionModel): Promise<SessionModel>;
 }

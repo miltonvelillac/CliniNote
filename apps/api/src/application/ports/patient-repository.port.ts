@@ -1,6 +1,6 @@
-import { Patient } from '../../domain/entities/patient.js';
+import { PatientModel } from '../../domain/entities/patient.js';
 
 export interface PatientRepositoryPort {
-  create(patient: Patient): Promise<Patient>;
-  findById(id: string): Promise<Patient | null>;
+  create(patient: PatientModel): Promise<PatientModel>;
+  findById(id: string): Promise<PatientModel | null>;
 }

@@ -1,9 +1,9 @@
-export type UserRole = 'psychologist' | 'admin';
+export type UserRoleType = 'psychologist' | 'admin';
 
-export type User = {
+export type UserModel = {
   id: string;
   name: string;
   email: string;
-  role: UserRole;
+  role: UserRoleType;
   createdAt: Date;
 };

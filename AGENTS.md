@@ -107,11 +107,19 @@ Use cases depend only on ports. Adapters implement ports. DI binds ports to adap
 ## Core Entities
 
 ```txt
-User
-Patient
-Session
-ClinicalNote
-AuditLog
+UserModel
+PatientModel
+SessionModel
+ClinicalNoteModel
+AuditLogModel
+```
+
+## Naming Rules
+
+```txt
+All data models and TypeScript types that represent domain data must end with Model.
+Use UserModel, PatientModel, SessionModel, ClinicalNoteModel, and AuditLogModel.
+Avoid names like Session because they can conflict with framework, runtime, or library classes.
 ```
 
 ## Main Ports

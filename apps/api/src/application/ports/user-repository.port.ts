@@ -1,6 +1,6 @@
-import { User } from '../../domain/entities/user.js';
+import { UserModel } from '../../domain/entities/user.js';
 
 export interface UserRepositoryPort {
-  findById(id: string): Promise<User | null>;
-  findByEmail(email: string): Promise<User | null>;
+  findById(id: string): Promise<UserModel | null>;
+  findByEmail(email: string): Promise<UserModel | null>;
 }
