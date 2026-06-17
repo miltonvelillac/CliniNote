@@ -1,10 +1,11 @@
-import { AuditLogRepositoryPort } from "@clininote/api/application/ports/audit-log-repository.port.js";
-import { AuditLogModel } from "@clininote/api/domain/entities/audit-log.js";
+import type { AuditLogRepositoryPort } from '../../../application/ports/audit-log-repository.port.js';
+import type { AuditLogModel } from '../../../domain/entities/audit-log.js';
 
 export class InMemoryAuditLogRepository implements AuditLogRepositoryPort {
-  private readonly clinicalNotes = new Map<string, AuditLogModel>();
-    async create(note: AuditLogModel): Promise<AuditLogModel> {
-    this.clinicalNotes.set(note.id, note);
-    return note;
+  private readonly auditLogs = new Map<string, AuditLogModel>();
+
+  async create(log: AuditLogModel): Promise<AuditLogModel> {
+    this.auditLogs.set(log.id, log);
+    return log;
   }
 }

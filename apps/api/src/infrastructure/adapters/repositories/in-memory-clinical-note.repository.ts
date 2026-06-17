@@ -9,6 +9,10 @@ export class InMemoryClinicalNoteRepository implements ClinicalNoteRepositoryPor
     return note;
   }
 
+  async findById(id: string): Promise<ClinicalNoteModel | null> {
+    return this.clinicalNotes.get(id) ?? null;
+  }
+
   async findBySessionId(sessionId: string): Promise<ClinicalNoteModel | null> {
     return (
       [...this.clinicalNotes.values()].find(
