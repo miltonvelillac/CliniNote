@@ -151,6 +151,15 @@ ExportClinicalNotePdf
 
 Backend is the MCP Host.
 
+MCP servers must also use hexagonal architecture:
+
+```txt
+MCP Tool -> Use Case -> Port -> Adapter
+```
+
+Use ports and adapters, dependency injection, factories, and lazy loading inside each MCP server.
+For mock adapters, keep the implementation as simple as possible. Do not add factories for mocks unless the mock setup becomes genuinely complex or reused.
+
 ### audio-transcription-server
 
 Tool:

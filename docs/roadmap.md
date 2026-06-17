@@ -72,12 +72,16 @@ Goal: test the full flow using in-memory data.
 
 ## Step 5: MCP Server Stubs
 
+Status: completed.
+
 Goal: integrate the flow without real AI yet.
 
-- `clinical-note-server`: generate a structured mock note.
-- `audio-transcription-server`: return a mock transcription.
-- API calls those ports as if they were external services.
-- Keep prompts inside the clinical note MCP server.
+- [x] `clinical-note-server`: generate a structured mock note.
+- [x] `audio-transcription-server`: return a mock transcription.
+- [x] API calls those ports as if they were external services.
+- [x] Keep prompts inside the clinical note MCP server.
+- [x] Add root scripts for MCP server development and builds.
+- [x] Add manual MCP test documentation.
 
 ## Step 6: Frontend Shell
 
@@ -156,4 +160,4 @@ Goal: add the minimum hardening needed for the MVP.
 
 ## Recommended Next Step
 
-Continue with **Step 5: MCP Server Stubs**, because the in-memory HTTP flow is now working end to end.
+Continue with **Step 6: Frontend Shell**, because the backend and MCP mock foundations are now in place.

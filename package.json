@@ -2,6 +2,7 @@
   "name": "clininote",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "CliniNote monorepo for clinical note draft generation.",
   "workspaces": [
     "apps/*",
@@ -10,8 +11,11 @@
   "scripts": {
     "dev": "npm run dev -ws --if-present",
     "dev:api": "npm run dev -w @clininote/api",
+    "dev:mcp:audio": "npm run dev -w @clininote/audio-transcription-server",
+    "dev:mcp:clinical-note": "npm run dev -w @clininote/clinical-note-server",
     "build": "npm run build -ws --if-present",
     "build:api": "npm run build -w @clininote/api",
+    "build:mcp": "npm run build -w @clininote/audio-transcription-server && npm run build -w @clininote/clinical-note-server",
     "start:api": "npm run start -w @clininote/api",
     "test": "npm run test -ws --if-present",
     "lint": "npm run lint -ws --if-present",
