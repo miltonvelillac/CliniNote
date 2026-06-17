@@ -5,9 +5,9 @@ import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
 import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
 import type { PatientModel } from '../../domain/entities/patient.js';
 import {
-  assertOptionalValidDate,
-  assertRequiredString,
-  normalizeOptionalString
+  assertOptionalValidDateField,
+  assertRequiredStringField,
+  normalizeOptionalStringField
 } from '../../domain/validation/assertions.js';
 import type { CreatePatientInputModel } from '../models/create-patient-input.model.js';
 
@@ -18,19 +18,16 @@ export class CreatePatientUseCase {
   ) {}
 
   async execute(input: CreatePatientInputModel): Promise<PatientModel> {
-    const psychologistId = assertRequiredString(
-      input.psychologistId,
-      'psychologistId'
-    );
-    const fullName = assertRequiredString(input.fullName, 'fullName');
+    const psychologistId = assertRequiredStringField(input, 'psychologistId');
+    const fullName = assertRequiredStringField(input, 'fullName');
 
     const patient: PatientModel = {
       id: randomUUID(),
       psychologistId,
       fullName,
-      document: normalizeOptionalString(input.document),
-      birthDate: assertOptionalValidDate(input.birthDate, 'birthDate'),
-      phone: normalizeOptionalString(input.phone),
+      document: normalizeOptionalStringField(input, 'document'),
+      birthDate: assertOptionalValidDateField(input, 'birthDate'),
+      phone: normalizeOptionalStringField(input, 'phone'),
       createdAt: new Date()
     };
 

@@ -1,5 +1,19 @@
 import { errorMessages } from '../messages/error-messages.js';
 
+type StringFieldName<TModel> = {
+  [TKey in keyof TModel]-?: NonNullable<TModel[TKey]> extends string
+    ? TKey
+    : never;
+}[keyof TModel] &
+  string;
+
+type DateFieldName<TModel> = {
+  [TKey in keyof TModel]-?: NonNullable<TModel[TKey]> extends Date
+    ? TKey
+    : never;
+}[keyof TModel] &
+  string;
+
 export function assertRequiredString(value: unknown, fieldName: string): string {
   if (typeof value !== 'string') {
     throw new Error(errorMessages.required(fieldName));
@@ -14,6 +28,13 @@ export function assertRequiredString(value: unknown, fieldName: string): string 
   return normalizedValue;
 }
 
+export function assertRequiredStringField<
+  TModel extends object,
+  TFieldName extends StringFieldName<TModel>
+>(model: TModel, fieldName: TFieldName): string {
+  return assertRequiredString(model[fieldName], fieldName);
+}
+
 export function normalizeOptionalString(value: unknown): string | undefined {
   if (value === undefined || value === null) {
     return undefined;
@@ -21,6 +42,13 @@ export function normalizeOptionalString(value: unknown): string | undefined {
 
   const normalizedValue = String(value).trim();
   return normalizedValue || undefined;
+}
+
+export function normalizeOptionalStringField<
+  TModel extends object,
+  TFieldName extends StringFieldName<TModel>
+>(model: TModel, fieldName: TFieldName): string | undefined {
+  return normalizeOptionalString(model[fieldName]);
 }
 
 export function assertOptionalValidDate(
@@ -38,12 +66,23 @@ export function assertOptionalValidDate(
   return value;
 }
 
-export function assertAtLeastOneDefined(
-  values: Record<string, unknown>,
+export function assertOptionalValidDateField<
+  TModel extends object,
+  TFieldName extends DateFieldName<TModel>
+>(model: TModel, fieldName: TFieldName): Date | undefined {
+  return assertOptionalValidDate(model[fieldName] as Date | undefined, fieldName);
+}
+
+export function assertAtLeastOneStringFieldDefined<
+  TModel extends object,
+  TFieldName extends StringFieldName<TModel>
+>(
+  model: TModel,
+  fieldNames: readonly TFieldName[],
   message: string
 ): void {
-  const hasValue = Object.values(values).some(
-    (value) => normalizeOptionalString(value) !== undefined
+  const hasValue = fieldNames.some(
+    (fieldName) => normalizeOptionalStringField(model, fieldName) !== undefined
   );
 
   if (!hasValue) {

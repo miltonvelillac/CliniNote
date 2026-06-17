@@ -4,7 +4,7 @@ import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.j
 import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.enum.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
 import { errorMessages } from '../../domain/messages/error-messages.js';
-import { assertRequiredString } from '../../domain/validation/assertions.js';
+import { assertRequiredStringField } from '../../domain/validation/assertions.js';
 import type { ExportClinicalNotePdfInputModel } from '../models/export-clinical-note-pdf-input.model.js';
 import type { ExportClinicalNotePdfResultModel } from '../models/export-clinical-note-pdf-result.model.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
@@ -23,14 +23,8 @@ export class ExportClinicalNotePdfUseCase {
   async execute(
     input: ExportClinicalNotePdfInputModel
   ): Promise<ExportClinicalNotePdfResultModel> {
-    const clinicalNoteId = assertRequiredString(
-      input.clinicalNoteId,
-      'clinicalNoteId'
-    );
-    const psychologistId = assertRequiredString(
-      input.psychologistId,
-      'psychologistId'
-    );
+    const clinicalNoteId = assertRequiredStringField(input, 'clinicalNoteId');
+    const psychologistId = assertRequiredStringField(input, 'psychologistId');
 
     const clinicalNote = await this.clinicalNoteRepository.findById(
       clinicalNoteId

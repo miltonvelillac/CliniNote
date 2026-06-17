@@ -7,9 +7,9 @@ import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.j
 import { SessionStatusEnum } from '../../domain/enums/session-status.enum.js';
 import { errorMessages } from '../../domain/messages/error-messages.js';
 import {
-  assertOptionalValidDate,
-  assertRequiredString,
-  normalizeOptionalString
+  assertOptionalValidDateField,
+  assertRequiredStringField,
+  normalizeOptionalStringField
 } from '../../domain/validation/assertions.js';
 import type { CreateSessionInputModel } from '../models/create-session-input.model.js';
 import type { SessionModel } from '../../domain/entities/session.js';
@@ -22,13 +22,10 @@ export class CreateSessionUseCase {
   ) {}
 
   async execute(input: CreateSessionInputModel): Promise<SessionModel> {
-    const patientId = assertRequiredString(input.patientId, 'patientId');
-    const psychologistId = assertRequiredString(
-      input.psychologistId,
-      'psychologistId'
-    );
+    const patientId = assertRequiredStringField(input, 'patientId');
+    const psychologistId = assertRequiredStringField(input, 'psychologistId');
     const sessionDate =
-      assertOptionalValidDate(input.sessionDate, 'sessionDate') ?? new Date();
+      assertOptionalValidDateField(input, 'sessionDate') ?? new Date();
 
     const patient = await this.patientRepository.findById(patientId);
 
@@ -45,7 +42,7 @@ export class CreateSessionUseCase {
       patientId,
       psychologistId,
       sessionDate,
-      rawInputText: normalizeOptionalString(input.rawInputText),
+      rawInputText: normalizeOptionalStringField(input, 'rawInputText'),
       status: SessionStatusEnum.Created,
       createdAt: new Date()
     };

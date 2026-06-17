@@ -5,9 +5,9 @@ import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
 import { errorMessages } from '../../domain/messages/error-messages.js';
 import {
-  assertAtLeastOneDefined,
-  assertRequiredString,
-  normalizeOptionalString
+  assertAtLeastOneStringFieldDefined,
+  assertRequiredStringField,
+  normalizeOptionalStringField
 } from '../../domain/validation/assertions.js';
 import type { UpdateClinicalNoteInputModel } from '../models/update-clinical-note-input.model.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
@@ -33,54 +33,56 @@ export class UpdateClinicalNoteUseCase {
       throw new Error(errorMessages.approvedClinicalNotesCannotBeEdited);
     }
 
-    assertAtLeastOneDefined(
-      {
-        consultationReason: input.consultationReason,
-        currentProblem: input.currentProblem,
-        background: input.background,
-        mentalStatus: input.mentalStatus,
-        conceptualization: input.conceptualization,
-        intervention: input.intervention,
-        clinicalImpression: input.clinicalImpression,
-        plan: input.plan,
-        recommendations: input.recommendations,
-        professionalObservations: input.professionalObservations,
-        missingInformation: input.missingInformation
-      },
+    assertAtLeastOneStringFieldDefined(
+      input,
+      [
+        'consultationReason',
+        'currentProblem',
+        'background',
+        'mentalStatus',
+        'conceptualization',
+        'intervention',
+        'clinicalImpression',
+        'plan',
+        'recommendations',
+        'professionalObservations',
+        'missingInformation'
+      ],
       errorMessages.atLeastOneClinicalNoteFieldRequired
     );
 
     const updatedNote: ClinicalNoteModel = {
       ...clinicalNote,
       consultationReason:
-        normalizeOptionalString(input.consultationReason) ??
+        normalizeOptionalStringField(input, 'consultationReason') ??
         clinicalNote.consultationReason,
       currentProblem:
-        normalizeOptionalString(input.currentProblem) ??
+        normalizeOptionalStringField(input, 'currentProblem') ??
         clinicalNote.currentProblem,
       background:
-        normalizeOptionalString(input.background) ?? clinicalNote.background,
+        normalizeOptionalStringField(input, 'background') ??
+        clinicalNote.background,
       mentalStatus:
-        normalizeOptionalString(input.mentalStatus) ??
+        normalizeOptionalStringField(input, 'mentalStatus') ??
         clinicalNote.mentalStatus,
       conceptualization:
-        normalizeOptionalString(input.conceptualization) ??
+        normalizeOptionalStringField(input, 'conceptualization') ??
         clinicalNote.conceptualization,
       intervention:
-        normalizeOptionalString(input.intervention) ??
+        normalizeOptionalStringField(input, 'intervention') ??
         clinicalNote.intervention,
       clinicalImpression:
-        normalizeOptionalString(input.clinicalImpression) ??
+        normalizeOptionalStringField(input, 'clinicalImpression') ??
         clinicalNote.clinicalImpression,
-      plan: normalizeOptionalString(input.plan) ?? clinicalNote.plan,
+      plan: normalizeOptionalStringField(input, 'plan') ?? clinicalNote.plan,
       recommendations:
-        normalizeOptionalString(input.recommendations) ??
+        normalizeOptionalStringField(input, 'recommendations') ??
         clinicalNote.recommendations,
       professionalObservations:
-        normalizeOptionalString(input.professionalObservations) ??
+        normalizeOptionalStringField(input, 'professionalObservations') ??
         clinicalNote.professionalObservations,
       missingInformation:
-        normalizeOptionalString(input.missingInformation) ??
+        normalizeOptionalStringField(input, 'missingInformation') ??
         clinicalNote.missingInformation
     };
 
@@ -102,12 +104,13 @@ export class UpdateClinicalNoteUseCase {
     clinicalNoteId: string,
     psychologistId: string
   ): Promise<ClinicalNoteModel> {
-    const normalizedClinicalNoteId = assertRequiredString(
-      clinicalNoteId,
+    const input = { clinicalNoteId, psychologistId };
+    const normalizedClinicalNoteId = assertRequiredStringField(
+      input,
       'clinicalNoteId'
     );
-    const normalizedPsychologistId = assertRequiredString(
-      psychologistId,
+    const normalizedPsychologistId = assertRequiredStringField(
+      input,
       'psychologistId'
     );
 

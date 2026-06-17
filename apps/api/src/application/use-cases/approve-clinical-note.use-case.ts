@@ -6,7 +6,7 @@ import { SessionStatusEnum } from '../../domain/enums/session-status.enum.js';
 import type { ApproveClinicalNoteInputModel } from '../models/approve-clinical-note-input.model.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
 import { errorMessages } from '../../domain/messages/error-messages.js';
-import { assertRequiredString } from '../../domain/validation/assertions.js';
+import { assertRequiredStringField } from '../../domain/validation/assertions.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
 import type { ClinicalNoteRepositoryPort } from '../ports/clinical-note-repository.port.js';
 import type { SessionRepositoryPort } from '../ports/session-repository.port.js';
@@ -21,14 +21,8 @@ export class ApproveClinicalNoteUseCase {
   async execute(
     input: ApproveClinicalNoteInputModel
   ): Promise<ClinicalNoteModel> {
-    const clinicalNoteId = assertRequiredString(
-      input.clinicalNoteId,
-      'clinicalNoteId'
-    );
-    const psychologistId = assertRequiredString(
-      input.psychologistId,
-      'psychologistId'
-    );
+    const clinicalNoteId = assertRequiredStringField(input, 'clinicalNoteId');
+    const psychologistId = assertRequiredStringField(input, 'psychologistId');
 
     const clinicalNote = await this.clinicalNoteRepository.findById(
       clinicalNoteId
