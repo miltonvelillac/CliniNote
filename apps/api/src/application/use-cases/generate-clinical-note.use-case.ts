@@ -1,14 +1,11 @@
 import { randomUUID } from 'node:crypto';
-import {
-  AuditActionEnum,
-  AuditEntityTypeEnum
-} from '../../domain/entities/audit-log.js';
+import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
+import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
+import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.enum.js';
+import { SessionStatusEnum } from '../../domain/enums/session-status.enum.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
-import type { GenerateClinicalNoteInputModel } from '../../domain/entities/generate-clinical-note-input.js';
-import {
-  SessionStatusEnum,
-  type SessionModel
-} from '../../domain/entities/session.js';
+import type { SessionModel } from '../../domain/entities/session.js';
+import type { GenerateClinicalNoteInputModel } from '../models/generate-clinical-note-input.model.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
 import type { ClinicalNoteGeneratorPort } from '../ports/clinical-note-generator.port.js';
 import type { ClinicalNoteRepositoryPort } from '../ports/clinical-note-repository.port.js';
@@ -47,6 +44,7 @@ export class GenerateClinicalNoteUseCase {
     const clinicalNote: ClinicalNoteModel = {
       id: randomUUID(),
       sessionId: session.id,
+      status: ClinicalNoteStatusEnum.Draft,
       ...generatedNote,
       createdAt: new Date()
     };

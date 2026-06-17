@@ -1,9 +1,4 @@
-export enum SessionStatusEnum {
-  Created = 'created',
-  Transcribed = 'transcribed',
-  NoteGenerated = 'note_generated',
-  Approved = 'approved'
-}
+import type { SessionStatusEnum } from '../enums/session-status.enum.js';
 
 export type SessionModel = {
   id: string;

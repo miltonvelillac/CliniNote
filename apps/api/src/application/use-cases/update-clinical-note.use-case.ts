@@ -1,10 +1,9 @@
 import { randomUUID } from 'node:crypto';
-import {
-  AuditActionEnum,
-  AuditEntityTypeEnum
-} from '../../domain/entities/audit-log.js';
+import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
+import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
+import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.enum.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
-import type { UpdateClinicalNoteInputModel } from '../../domain/entities/update-clinical-note-input.js';
+import type { UpdateClinicalNoteInputModel } from '../models/update-clinical-note-input.model.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
 import type { ClinicalNoteRepositoryPort } from '../ports/clinical-note-repository.port.js';
 import type { SessionRepositoryPort } from '../ports/session-repository.port.js';
@@ -24,7 +23,7 @@ export class UpdateClinicalNoteUseCase {
       input.psychologistId
     );
 
-    if (clinicalNote.approvedAt) {
+    if (clinicalNote.status === ClinicalNoteStatusEnum.Approved) {
       throw new Error('Approved clinical notes cannot be edited.');
     }
 

@@ -32,17 +32,26 @@ Goal: create a clean API using hexagonal architecture.
 
 ## Step 3: Domain Model
 
+Status: in progress.
+
 Goal: define core rules without a real database yet.
 
-- Refine entities:
-  - `UserModel`
-  - `PatientModel`
-  - `SessionModel`
-  - `ClinicalNoteModel`
-  - `AuditLogModel`
+- [x] Refine entities:
+  - [x] `UserModel`
+  - [x] `PatientModel`
+  - [x] `SessionModel`
+  - [x] `ClinicalNoteModel`
+  - [x] `AuditLogModel`
+- [x] Separate domain enums:
+  - [x] `UserRoleEnum`
+  - [x] `SessionStatusEnum`
+  - [x] `ClinicalNoteStatusEnum`
+  - [x] `AuditActionEnum`
+  - [x] `AuditEntityTypeEnum`
+- [x] Move application input/result models out of `domain/entities`.
 - Add basic validations.
-- Define session and note states.
-- Ensure AI only generates drafts and never approves final notes.
+- [x] Define session and note states.
+- [x] Ensure AI only generates drafts and never approves final notes.
 
 ## Step 4: Functional API Without Database
 

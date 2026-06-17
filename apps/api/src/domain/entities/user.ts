@@ -1,9 +1,9 @@
-export type UserRoleType = 'psychologist' | 'admin';
+import type { UserRoleEnum } from '../enums/user-role.enum.js';
 
 export type UserModel = {
   id: string;
   name: string;
   email: string;
-  role: UserRoleType;
+  role: UserRoleEnum;
   createdAt: Date;
 };

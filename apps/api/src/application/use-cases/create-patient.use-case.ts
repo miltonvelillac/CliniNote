@@ -1,12 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
 import type { PatientRepositoryPort } from '../ports/patient-repository.port.js';
-import {
-  AuditActionEnum,
-  AuditEntityTypeEnum
-} from '../../domain/entities/audit-log.js';
+import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
+import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
 import type { PatientModel } from '../../domain/entities/patient.js';
-import { CreatePatientInputModel } from '@clininote/api/domain/entities/create-patient-input.js';
+import type { CreatePatientInputModel } from '../models/create-patient-input.model.js';
 
 export class CreatePatientUseCase {
   constructor(

@@ -7,7 +7,7 @@ export class MockClinicalNoteGeneratorAdapter implements ClinicalNoteGeneratorPo
     template: string;
     language: string;
   }): Promise<
-    Omit<ClinicalNoteModel, 'id' | 'sessionId' | 'approvedAt' | 'createdAt'>
+    Omit<ClinicalNoteModel, 'id' | 'sessionId' | 'status' | 'approvedAt' | 'createdAt'>
   > {
     const missingInformation = 'Not provided. Requires professional review.';
 

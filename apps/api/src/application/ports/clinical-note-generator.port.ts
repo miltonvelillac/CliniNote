@@ -5,5 +5,7 @@ export interface ClinicalNoteGeneratorPort {
     sessionSummary: string;
     template: string;
     language: string;
-  }): Promise<Omit<ClinicalNoteModel, 'id' | 'sessionId' | 'approvedAt' | 'createdAt'>>;
+  }): Promise<
+    Omit<ClinicalNoteModel, 'id' | 'sessionId' | 'status' | 'approvedAt' | 'createdAt'>
+  >;
 }

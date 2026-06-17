@@ -1,11 +1,10 @@
 import { randomUUID } from 'node:crypto';
-import {
-  AuditActionEnum,
-  AuditEntityTypeEnum
-} from '../../domain/entities/audit-log.js';
+import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
+import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
+import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.enum.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
-import type { ExportClinicalNotePdfInputModel } from '../../domain/entities/export-clinical-note-pdf-input.js';
-import type { ExportClinicalNotePdfResultModel } from '../../domain/entities/export-clinical-note-pdf-result.js';
+import type { ExportClinicalNotePdfInputModel } from '../models/export-clinical-note-pdf-input.model.js';
+import type { ExportClinicalNotePdfResultModel } from '../models/export-clinical-note-pdf-result.model.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
 import type { ClinicalNoteRepositoryPort } from '../ports/clinical-note-repository.port.js';
 import type { PdfGeneratorPort } from '../ports/pdf-generator.port.js';
@@ -40,7 +39,7 @@ export class ExportClinicalNotePdfUseCase {
       );
     }
 
-    if (!clinicalNote.approvedAt) {
+    if (clinicalNote.status !== ClinicalNoteStatusEnum.Approved) {
       throw new Error('Only approved clinical notes can be exported.');
     }
 

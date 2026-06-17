@@ -1,11 +1,10 @@
 import { randomUUID } from 'node:crypto';
-import {
-  AuditActionEnum,
-  AuditEntityTypeEnum
-} from '../../domain/entities/audit-log.js';
-import type { ApproveClinicalNoteInputModel } from '../../domain/entities/approve-clinical-note-input.js';
+import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
+import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
+import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.enum.js';
+import { SessionStatusEnum } from '../../domain/enums/session-status.enum.js';
+import type { ApproveClinicalNoteInputModel } from '../models/approve-clinical-note-input.model.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
-import { SessionStatusEnum } from '../../domain/entities/session.js';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
 import type { ClinicalNoteRepositoryPort } from '../ports/clinical-note-repository.port.js';
 import type { SessionRepositoryPort } from '../ports/session-repository.port.js';
@@ -38,7 +37,7 @@ export class ApproveClinicalNoteUseCase {
       );
     }
 
-    if (clinicalNote.approvedAt) {
+    if (clinicalNote.status === ClinicalNoteStatusEnum.Approved) {
       throw new Error('Clinical note is already approved.');
     }
 
@@ -58,6 +57,7 @@ export class ApproveClinicalNoteUseCase {
 
     const approvedNote = await this.clinicalNoteRepository.update({
       ...clinicalNote,
+      status: ClinicalNoteStatusEnum.Approved,
       approvedAt: new Date()
     });
 

@@ -1,4 +1,4 @@
-import type { ListPatientsInputModel } from '../../domain/entities/list-patients-input.js';
+import type { ListPatientsInputModel } from '../models/list-patients-input.model.js';
 import type { PatientModel } from '../../domain/entities/patient.js';
 import type { PatientRepositoryPort } from '../ports/patient-repository.port.js';
 

@@ -1,17 +1,5 @@
-export enum AuditActionEnum {
-  Create = 'create',
-  Update = 'update',
-  Transcribe = 'transcribe',
-  Generate = 'generate',
-  Approve = 'approve',
-  Export = 'export'
-}
-
-export enum AuditEntityTypeEnum {
-  Patient = 'Patient',
-  Session = 'Session',
-  ClinicalNote = 'ClinicalNote'
-}
+import type { AuditActionEnum } from '../enums/audit-action.enum.js';
+import type { AuditEntityTypeEnum } from '../enums/audit-entity-type.enum.js';
 
 export type AuditLogModel = {
   id: string;
