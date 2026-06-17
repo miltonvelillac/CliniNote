@@ -1,50 +1,52 @@
 # CliniNote Roadmap
 
-Este roadmap divide el proyecto en pasos pequenos para avanzar de forma incremental.
+This roadmap splits the project into small steps so we can move forward incrementally.
 
-## Paso 1: Base del monorepo
+## Step 1: Monorepo Base
 
-Estado: completado.
+Status: completed.
 
-Objetivo: tener una estructura compilable y clara.
+Goal: have a clear and buildable project structure.
 
-- [x] Validar estructura final.
-- [x] Ajustar scripts `dev`, `build`, `test`.
-- [x] Confirmar que `apps/web`, `apps/api` y `mcp-servers/*` compilan.
-- [x] Agregar `.env.example`.
+- [x] Validate the final structure.
+- [x] Adjust `dev`, `build`, and `test` scripts.
+- [x] Confirm that `apps/web`, `apps/api`, and `mcp-servers/*` compile.
+- [x] Add `.env.example`.
 
-## Paso 2: Backend MVP esqueleto
+## Step 2: Backend MVP Skeleton
 
-Objetivo: crear una API limpia con arquitectura hexagonal.
+Status: completed.
 
-- Crear use cases iniciales:
-  - `CreatePatient`
-  - `CreateSession`
-  - `GenerateClinicalNote`
-  - `UpdateClinicalNote`
-  - `ApproveClinicalNote`
-  - `ExportClinicalNotePdf`
-- Crear controladores HTTP por modulo.
-- Crear DI basico.
-- Usar repositorios en memoria temporalmente para avanzar rapido.
+Goal: create a clean API using hexagonal architecture.
 
-## Paso 3: Modelo de dominio
+- [x] Create initial use cases:
+  - [x] `CreatePatient`
+  - [x] `CreateSession`
+  - [x] `GenerateClinicalNote`
+  - [x] `UpdateClinicalNote`
+  - [x] `ApproveClinicalNote`
+  - [x] `ExportClinicalNotePdf`
+- [x] Create HTTP controllers by module.
+- [x] Create basic dependency injection.
+- [x] Use in-memory repositories temporarily to move quickly.
 
-Objetivo: definir reglas centrales sin base de datos todavia.
+## Step 3: Domain Model
 
-- Refinar entidades:
-  - `User`
-  - `Patient`
-  - `Session`
-  - `ClinicalNote`
-  - `AuditLog`
-- Agregar validaciones basicas.
-- Definir estados de sesion y nota.
-- Asegurar que la IA solo genere borradores y nunca apruebe notas.
+Goal: define core rules without a real database yet.
 
-## Paso 4: API funcional sin base de datos
+- Refine entities:
+  - `UserModel`
+  - `PatientModel`
+  - `SessionModel`
+  - `ClinicalNoteModel`
+  - `AuditLogModel`
+- Add basic validations.
+- Define session and note states.
+- Ensure AI only generates drafts and never approves final notes.
 
-Objetivo: probar el flujo completo con datos en memoria.
+## Step 4: Functional API Without Database
+
+Goal: test the full flow using in-memory data.
 
 - `POST /patients`
 - `GET /patients`
@@ -53,92 +55,92 @@ Objetivo: probar el flujo completo con datos en memoria.
 - `PATCH /clinical-notes/:id`
 - `POST /clinical-notes/:id/approve`
 - `GET /clinical-notes/:id/pdf`
-- Registrar auditoria en memoria para cada accion.
+- Register in-memory audit logs for each action.
 
-## Paso 5: MCP servers stub
+## Step 5: MCP Server Stubs
 
-Objetivo: integrar el flujo sin IA real todavia.
+Goal: integrate the flow without real AI yet.
 
-- `clinical-note-server`: generar nota mock estructurada.
-- `audio-transcription-server`: devolver transcripcion mock.
-- API llama esos puertos como si fueran servicios externos.
-- Mantener prompts dentro del servidor MCP clinico.
+- `clinical-note-server`: generate a structured mock note.
+- `audio-transcription-server`: return a mock transcription.
+- API calls those ports as if they were external services.
+- Keep prompts inside the clinical note MCP server.
 
-## Paso 6: Frontend shell
+## Step 6: Frontend Shell
 
-Objetivo: crear navegacion base Angular.
+Goal: create the base Angular navigation.
 
-- Layout principal.
-- Rutas lazy:
+- Main layout.
+- Lazy routes:
   - login
   - patients
   - sessions
   - clinical note editor
-- Atomic Design basico:
-  - botones
+- Basic Atomic Design components:
+  - buttons
   - inputs
-  - paneles/formularios
-- Store inicial con NgRx Signals.
+  - form panels
+- Initial store with NgRx Signals.
 
-## Paso 7: Flujo principal UI
+## Step 7: Main UI Flow
 
-Objetivo: usar la app manualmente de punta a punta.
+Goal: use the app manually from end to end.
 
-- Crear paciente.
-- Crear sesion.
-- Escribir resumen.
-- Generar nota.
-- Editar campos.
-- Aprobar nota.
-- Exportar PDF.
+- Create patient.
+- Create session.
+- Write summary.
+- Generate note.
+- Edit fields.
+- Approve note.
+- Export PDF.
 
-## Paso 8: Persistencia real
+## Step 8: Real Persistence
 
-Objetivo: reemplazar repositorios en memoria por base de datos.
+Goal: replace in-memory repositories with a database.
 
-- Elegir PostgreSQL o SQL Server.
-- Agregar migraciones.
-- Implementar adapters reales para repositories.
-- Mantener use cases intactos.
+- Choose PostgreSQL or SQL Server.
+- Add migrations.
+- Implement real repository adapters.
+- Keep use cases intact.
 
-## Paso 9: Auth
+## Step 9: Auth
 
-Objetivo: implementar login MVP.
+Goal: implement MVP login.
 
-- Registro o seed de usuario psicologo.
-- Login con JWT.
-- Middleware de auth.
-- Asociar pacientes y sesiones al psicologo autenticado.
+- Register or seed a psychologist user.
+- Login with JWT.
+- Auth middleware.
+- Associate patients and sessions with the authenticated psychologist.
 
-## Paso 10: PDF
+## Step 10: PDF
 
-Objetivo: exportar una nota aprobada.
+Goal: export an approved note.
 
-- Implementar adapter `PdfGeneratorPort`.
-- Usar PDFKit o Puppeteer.
-- Crear plantilla simple y profesional.
-- Bloquear exportacion si la nota no esta aprobada.
+- Implement `PdfGeneratorPort` adapter.
+- Use PDFKit or Puppeteer.
+- Create a simple and professional template.
+- Block export when the note is not approved.
 
-## Paso 11: IA real
+## Step 11: Real AI
 
-Objetivo: reemplazar mocks por integraciones reales.
+Goal: replace mocks with real integrations.
 
-- Clinical note MCP llama al LLM.
-- Audio MCP llama al servicio real de transcripcion.
-- Validar reglas clinicas del prompt.
-- Manejar errores y respuestas incompletas.
+- Clinical note MCP calls the LLM.
+- Audio MCP calls the real transcription service.
+- Validate clinical prompt rules.
+- Handle errors and incomplete responses.
 
-## Paso 12: Seguridad y cierre MVP
+## Step 12: Security And MVP Closure
 
-Objetivo: endurecer lo minimo necesario para el MVP.
+Goal: add the minimum hardening needed for the MVP.
 
-- Validacion con Zod.
-- Variables de entorno.
-- CORS controlado.
-- Logs sin datos sensibles.
-- Auditoria persistente.
-- Tests de use cases criticos.
+- Validation with Zod.
+- Environment variables.
+- Controlled CORS.
+- Logs without sensitive data.
+- Persistent audit logs.
+- Tests for critical use cases.
 
-## Siguiente paso recomendado
+## Recommended Next Step
 
-Continuar con el **Paso 2: Backend MVP esqueleto**, porque define el corazon del sistema antes de crecer la UI o conectar una base de datos real.
+Continue with **Step 3: Domain Model**, because Step 2 is already completed and the domain rules should be tightened before expanding the API behavior or frontend.
