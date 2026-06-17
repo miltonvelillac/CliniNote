@@ -55,16 +55,20 @@ Goal: define core rules without a real database yet.
 
 ## Step 4: Functional API Without Database
 
+Status: completed.
+
 Goal: test the full flow using in-memory data.
 
-- `POST /patients`
-- `GET /patients`
-- `POST /sessions`
-- `POST /sessions/:id/generate-note`
-- `PATCH /clinical-notes/:id`
-- `POST /clinical-notes/:id/approve`
-- `GET /clinical-notes/:id/pdf`
-- Register in-memory audit logs for each action.
+- [x] `POST /patients`
+- [x] `GET /patients`
+- [x] `POST /sessions`
+- [x] `POST /sessions/:id/generate-note`
+- [x] `PATCH /clinical-notes/:id`
+- [x] `POST /clinical-notes/:id/approve`
+- [x] `GET /clinical-notes/:id/pdf`
+- [x] Register in-memory audit logs for each action.
+- [x] Add manual API test documentation.
+- [x] Improve HTTP error status mapping.
 
 ## Step 5: MCP Server Stubs
 
@@ -152,4 +156,4 @@ Goal: add the minimum hardening needed for the MVP.
 
 ## Recommended Next Step
 
-Continue with **Step 3: Domain Model**, because Step 2 is already completed and the domain rules should be tightened before expanding the API behavior or frontend.
+Continue with **Step 5: MCP Server Stubs**, because the in-memory HTTP flow is now working end to end.

@@ -1,5 +1,5 @@
-import type { ClinicalNoteGeneratorPort } from '@clininote/api/application/ports/clinical-note-generator.port.js';
-import type { ClinicalNoteModel } from '@clininote/api/domain/entities/clinical-note.js';
+import type { ClinicalNoteGeneratorPort } from '../../../application/ports/clinical-note-generator.port.js';
+import type { ClinicalNoteModel } from '../../../domain/entities/clinical-note.js';
 
 export class MockClinicalNoteGeneratorAdapter implements ClinicalNoteGeneratorPort {
   async generateClinicalNote(input: {

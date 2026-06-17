@@ -1,3 +1,4 @@
+import { domainErrors } from '../errors/domain-error.js';
 import { errorMessages } from '../messages/error-messages.js';
 
 type StringFieldName<TModel> = {
@@ -16,13 +17,13 @@ type DateFieldName<TModel> = {
 
 export function assertRequiredString(value: unknown, fieldName: string): string {
   if (typeof value !== 'string') {
-    throw new Error(errorMessages.required(fieldName));
+    throw domainErrors.badRequest(errorMessages.required(fieldName));
   }
 
   const normalizedValue = value.trim();
 
   if (!normalizedValue) {
-    throw new Error(errorMessages.required(fieldName));
+    throw domainErrors.badRequest(errorMessages.required(fieldName));
   }
 
   return normalizedValue;
@@ -60,7 +61,7 @@ export function assertOptionalValidDate(
   }
 
   if (Number.isNaN(value.getTime())) {
-    throw new Error(errorMessages.invalidDate(fieldName));
+    throw domainErrors.badRequest(errorMessages.invalidDate(fieldName));
   }
 
   return value;
@@ -86,6 +87,6 @@ export function assertAtLeastOneStringFieldDefined<
   );
 
   if (!hasValue) {
-    throw new Error(message);
+    throw domainErrors.badRequest(message);
   }
 }

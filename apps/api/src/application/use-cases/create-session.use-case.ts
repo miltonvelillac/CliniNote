@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { AuditLogRepositoryPort } from '../ports/audit-log-repository.port.js';
 import type { PatientRepositoryPort } from '../ports/patient-repository.port.js';
 import type { SessionRepositoryPort } from '../ports/session-repository.port.js';
+import { domainErrors } from '../../domain/errors/domain-error.js';
 import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
 import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
 import { SessionStatusEnum } from '../../domain/enums/session-status.enum.js';
@@ -30,11 +31,13 @@ export class CreateSessionUseCase {
     const patient = await this.patientRepository.findById(patientId);
 
     if (!patient) {
-      throw new Error(errorMessages.patientNotFound(patientId));
+      throw domainErrors.notFound(errorMessages.patientNotFound(patientId));
     }
 
     if (patient.psychologistId !== psychologistId) {
-      throw new Error(errorMessages.patientDoesNotBelongToPsychologist);
+      throw domainErrors.forbidden(
+        errorMessages.patientDoesNotBelongToPsychologist
+      );
     }
 
     const session: SessionModel = {

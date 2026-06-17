@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { AuditActionEnum } from '../../domain/enums/audit-action.enum.js';
 import { AuditEntityTypeEnum } from '../../domain/enums/audit-entity-type.enum.js';
 import { ClinicalNoteStatusEnum } from '../../domain/enums/clinical-note-status.enum.js';
+import { domainErrors } from '../../domain/errors/domain-error.js';
 import { SessionStatusEnum } from '../../domain/enums/session-status.enum.js';
 import type { ClinicalNoteModel } from '../../domain/entities/clinical-note.js';
 import type { SessionModel } from '../../domain/entities/session.js';
@@ -36,7 +37,7 @@ export class GenerateClinicalNoteUseCase {
     );
 
     if (existingNote) {
-      throw new Error(
+      throw domainErrors.conflict(
         errorMessages.clinicalNoteForSessionAlreadyExists(session.id)
       );
     }
@@ -88,11 +89,15 @@ export class GenerateClinicalNoteUseCase {
     const session = await this.sessionRepository.findById(normalizedSessionId);
 
     if (!session) {
-      throw new Error(errorMessages.sessionNotFound(normalizedSessionId));
+      throw domainErrors.notFound(
+        errorMessages.sessionNotFound(normalizedSessionId)
+      );
     }
 
     if (session.psychologistId !== normalizedPsychologistId) {
-      throw new Error(errorMessages.sessionDoesNotBelongToPsychologist);
+      throw domainErrors.forbidden(
+        errorMessages.sessionDoesNotBelongToPsychologist
+      );
     }
 
     return session;
@@ -106,7 +111,7 @@ export class GenerateClinicalNoteUseCase {
     ).trim();
 
     if (!sessionSummary) {
-      throw new Error(errorMessages.sessionSummaryRequired);
+      throw domainErrors.badRequest(errorMessages.sessionSummaryRequired);
     }
 
     return sessionSummary;

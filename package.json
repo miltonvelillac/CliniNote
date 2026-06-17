@@ -9,7 +9,10 @@
   ],
   "scripts": {
     "dev": "npm run dev -ws --if-present",
+    "dev:api": "npm run dev -w @clininote/api",
     "build": "npm run build -ws --if-present",
+    "build:api": "npm run build -w @clininote/api",
+    "start:api": "npm run start -w @clininote/api",
     "test": "npm run test -ws --if-present",
     "lint": "npm run lint -ws --if-present",
     "format": "prettier --write ."

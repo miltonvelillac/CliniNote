@@ -1,5 +1,9 @@
 import cors from 'cors';
 import express, { type ErrorRequestHandler } from 'express';
+import {
+  DomainError,
+  DomainErrorKindEnum
+} from '../../domain/errors/domain-error.js';
 import { routes } from './routes.js';
 
 export function createHttpServer() {
@@ -21,6 +25,24 @@ export function createHttpServer() {
 const errorHandler: ErrorRequestHandler = (error, _request, response, _next) => {
   const message =
     error instanceof Error ? error.message : 'Unexpected application error.';
+  const statusCode = getStatusCode(error);
 
-  response.status(400).json({ error: message });
+  response.status(statusCode).json({ error: message });
 };
+
+function getStatusCode(error: unknown): number {
+  if (!(error instanceof DomainError)) {
+    return 500;
+  }
+
+  switch (error.kind) {
+    case DomainErrorKindEnum.BadRequest:
+      return 400;
+    case DomainErrorKindEnum.Forbidden:
+      return 403;
+    case DomainErrorKindEnum.NotFound:
+      return 404;
+    case DomainErrorKindEnum.Conflict:
+      return 409;
+  }
+}

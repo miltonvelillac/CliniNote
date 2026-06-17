@@ -1,4 +1,4 @@
-import type { PdfGeneratorPort } from '@clininote/api/application/ports/pdf-generator.port.js';
+import type { PdfGeneratorPort } from '../../../application/ports/pdf-generator.port.js';
 
 export class MockPdfGeneratorAdapter implements PdfGeneratorPort {
   async generatePdf(input: {
